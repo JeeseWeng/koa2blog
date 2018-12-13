@@ -36,18 +36,36 @@ module.exports = {
     },
 
     async index(ctx, next) {
+        console.log(ctx.session.user)
+        const pageSize = 5
+        const currentPage = parseInt(ctx.query.page) || 1
+        // 分类名
         const cname = ctx.query.c
         let cid
         if (cname) {
+            // 查询分类id
             const cateogry = await CategoryModel.findOne({ name: cname })
             cid = cateogry._id
         }
+        // 根据是否有分类来控制查询语句
         const query = cid ? { category: cid } : {}
-        const posts = await PostModel.find(query)
+        const allPostsCount = await PostModel.find(query).count()
+        const pageCount = Math.ceil(allPostsCount / pageSize)
+        const pageStart = currentPage - 2 > 0 ? currentPage - 2 : 1
+        const pageEnd = pageStart + 4 >= pageCount ? pageCount : pageStart + 4
+        const posts = await PostModel.find(query).skip((currentPage - 1) * pageSize).limit(pageSize)
+        // 根据是否有分类来控制分页链接
+        const baseUrl = cname ? `${ctx.path}?c=${cname}&page=` : `${ctx.path}?page=`
         await ctx.render('index', {
             title: 'JS之禅',
-            desc: '欢迎关注公众号 JavaScript之禅',
-            posts
+            posts,
+            pageSize,
+            currentPage,
+            allPostsCount,
+            pageCount,
+            pageStart,
+            pageEnd,
+            baseUrl
         })
     },
 
