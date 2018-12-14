@@ -5,6 +5,7 @@ const views = require('koa-views')
 const serve = require('koa-static')
 const session = require('koa-session')
 const flash = require('./middlewares/flash')
+const error = require('./middlewares/error_handler')
 const bodyParser = require('koa-bodyparser')
 const mongoose = require('mongoose')
 const marked = require('marked')
@@ -28,6 +29,8 @@ marked.setOptions({
 })
 
 const app = new Koa()
+
+app.use(error())
 
 app.use(serve(
     path.join(__dirname, 'public')
@@ -53,6 +56,11 @@ app.use(async (ctx, next) => {
     ctx.state.marked = marked
     await next()
 })
+
+app.on('error', (err, ctx) =>
+    console.error('server error', err)
+)
+
 
 router(app)
 
