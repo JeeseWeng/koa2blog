@@ -25,8 +25,6 @@
             <li><span class="pagination-ellipsis">&hellip;</span></li>
             {% endif %}
             {# 页码 #}
-
-            {# 渲染当前页和当前页的上下一页 #}
             {% for i in range(pageStart + 1, pageEnd) %}
             {% if i == currentPage %}
             <li><a class="pagination-link is-current" aria-label="Goto page {{i}}">{{i}}</a></li>
@@ -34,7 +32,6 @@
             <li><a href="{{baseUrl + i}}" class="pagination-link" aria-label="Goto page {{i+1}}">{{i}}</a></li>
             {% endif %}
             {% endfor %}
-
             {% if pageEnd < pageCount %} <li><span class="pagination-ellipsis">&hellip;</span></li>
                 {% endif %}
                 {# 最后一页 #}

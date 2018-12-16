@@ -1,9 +1,15 @@
-// routes/home.js
+const PostModel = require('../models/post')
+const CategoryModel = require('../models/category')
+
 module.exports = {
-    async index(ctx, next) {
-        await ctx.render('index', {
-            title: 'abc-blog',
-            desc: '欢迎关注公众号 JavaScript之禅'
-        })
-    }
+  async index (ctx, next) {
+    const posts = await PostModel.find({})
+    const categories = await CategoryModel.find({}).limit(5)
+    await ctx.render('index', {
+      title: 'koa2-blog',
+      desc: '将进一步修改',
+      posts,
+      categories
+    })
+  }
 }
